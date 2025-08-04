@@ -11,13 +11,618 @@
     <!-- Font Awesome pour les icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- CSS modulaire -->
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/banners.css">
-    <link rel="stylesheet" href="css/components.css">
+    <style>
+        /* ===== VARIABLES CSS ===== */
+        :root {
+            /* Couleurs principales */
+            --primary-blue: #3b82f6;
+            --primary-purple: #8b5cf6;
+            --primary-orange: #f97316;
+            --primary-green: #10b981;
+            
+            /* Couleurs de fond */
+            --bg-gradient-start: #1e293b;
+            --bg-gradient-end: #334155;
+            --card-bg: #ffffff;
+            --card-bg-dark: #1e293b;
+            
+            /* Couleurs de texte */
+            --text-primary: #1f2937;
+            --text-primary-dark: #f8fafc;
+            --text-secondary: #6b7280;
+            --text-secondary-dark: #cbd5e1;
+            
+            /* Ombres et effets */
+            --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-heavy: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            /* Transitions */
+            --transition-fast: 0.2s ease;
+            --transition-medium: 0.3s ease;
+            --transition-slow: 0.5s ease;
+            
+            /* Bordures */
+            --border-radius: 16px;
+            --border-radius-small: 8px;
+            
+            /* Bannières et escalade */
+            --escalation-bg: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+            --escalation-btn-bg: rgba(255, 255, 255, 0.1);
+            --escalation-btn-hover: rgba(255, 255, 255, 0.2);
+            --escalation-btn-primary: rgba(255, 255, 255, 0.9);
+            --escalation-btn-primary-text: #667eea;
+            --ticket-bg: #f0f9ff;
+            --ticket-border: #3b82f6;
+            --ticket-card-bg: #ffffff;
+            --ticket-text: #1e40af;
+            --problems-bg: #fef3c7;
+            --problems-border: #fbbf24;
+            --problems-text: #92400e;
+            --auto-result-bg: #f0f9ff;
+            --auto-result-border: #3b82f6;
+            --auto-result-text: #1e40af;
+            --suggestion-bg: #f3f4f6;
+            --suggestion-border: #d1d5db;
+            --suggestion-hover: #e5e7eb;
+            --action-bg: #f3f4f6;
+            --action-border: #d1d5db;
+            --action-hover: #e5e7eb;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        /* ===== MODE NUIT PROFESSIONNEL ===== */
+        [data-theme="dark"] {
+            /* Couleurs de base */
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #1e293b;
+            --card-bg: #1e293b;
+            --card-bg-dark: #334155;
+            
+            /* Texte */
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            /* Couleurs primaires */
+            --primary-blue: #3b82f6;
+            --primary-purple: #8b5cf6;
+            --primary-orange: #f97316;
+            --primary-green: #10b981;
+            
+            /* Bannières */
+            --escalation-bg: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            --ticket-bg: #0f172a;
+            --ticket-card-bg: #1e293b;
+            --problems-bg: #451a03;
+            --problems-border: #f59e0b;
+            --problems-text: #fbbf24;
+            --auto-result-bg: #0f172a;
+            --auto-result-text: #60a5fa;
+            --suggestion-bg: #1e293b;
+            --suggestion-border: #475569;
+            --suggestion-hover: #334155;
+            --action-bg: #1e293b;
+            --action-border: #475569;
+            --action-hover: #334155;
+        }
+
+        /* ===== RESET ET BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: var(--transition-medium);
+            overflow-x: hidden;
+        }
+
+        /* ===== CONTAINER PRINCIPAL ===== */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .title-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .title-section img {
+            height: 80px;
+            max-width: 300px;
+            object-fit: contain;
+        }
+
+        .title-section p {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: #10b981;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        /* ===== LANDING PAGE ===== */
+        .landing-page {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        .landing-content {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .landing-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .landing-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary-dark);
+            margin-bottom: 3rem;
+        }
+
+        /* ===== BANNIÈRE SAISIE SALLE ===== */
+        .room-input-banner {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-medium);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .banner-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .banner-icon {
+            font-size: 2rem;
+            color: var(--primary-blue);
+        }
+
+        .banner-header h3 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .banner-content p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .room-input-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+
+        .room-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: var(--border-radius-small);
+            font-size: 1.1rem;
+            transition: var(--transition-fast);
+            background: white;
+        }
+
+        .room-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .confirm-room-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius-small);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .confirm-room-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .room-examples {
+            text-align: left;
+        }
+
+        .room-examples p {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .example-rooms {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .room-example {
+            background: var(--suggestion-bg);
+            border: 1px solid var(--suggestion-border);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: 0.9rem;
+        }
+
+        .room-example:hover {
+            background: var(--suggestion-hover);
+            transform: translateY(-1px);
+        }
+
+        /* ===== CONTENU PRINCIPAL ===== */
+        .content {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+        }
+
+        .room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem 2rem;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+        }
+
+        .current-room-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .room-icon {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+        }
+
+        .room-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .change-room-btn {
+            background: var(--suggestion-bg);
+            border: 1px solid var(--suggestion-border);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: 0.9rem;
+        }
+
+        .change-room-btn:hover {
+            background: var(--suggestion-hover);
+        }
+
+        .return-btn {
+            background: var(--primary-purple);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .return-btn:hover {
+            background: #7c3aed;
+        }
+
+        /* ===== PALETTES DE PROBLÈMES ===== */
+        .problem-palettes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .palette {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-medium);
+            box-shadow: var(--shadow-light);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .palette::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-blue);
+            transform: scaleX(0);
+            transition: var(--transition-medium);
+        }
+
+        .palette:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .palette:hover::before {
+            transform: scaleX(1);
+        }
+
+        .palette.audio {
+            border-color: var(--primary-blue);
+        }
+
+        .palette.video {
+            border-color: var(--primary-purple);
+        }
+
+        .palette.network {
+            border-color: var(--primary-orange);
+        }
+
+        .palette.other {
+            border-color: var(--primary-green);
+        }
+
+        .palette-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            transition: var(--transition-fast);
+        }
+
+        .palette:hover .palette-icon {
+            transform: scale(1.1);
+        }
+
+        .palette h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .palette p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ===== MODALE ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-medium);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: var(--transition-medium);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .modal p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .modal-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius-small);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .modal-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .title-section {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .title-section img {
+                height: 60px;
+            }
+            
+            .landing-content h2 {
+                font-size: 2rem;
+            }
+            
+            .room-input-container {
+                flex-direction: column;
+            }
+            
+            .problem-palettes {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .room-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        /* ===== MODE NUIT ===== */
+        [data-theme="dark"] .room-input {
+            background: var(--card-bg-dark);
+            border-color: #475569;
+            color: var(--text-primary-dark);
+        }
+
+        [data-theme="dark"] .room-input:focus {
+            border-color: var(--primary-blue);
+        }
+
+        [data-theme="dark"] .room-example {
+            background: var(--suggestion-bg);
+            border-color: var(--suggestion-border);
+            color: var(--text-primary-dark);
+        }
+
+        [data-theme="dark"] .room-example:hover {
+            background: var(--suggestion-hover);
+        }
+    </style>
 </head>
 <body>
-    <!-- Container principal -->
     <div class="main-container">
         <!-- Header -->
         <div class="header">
@@ -27,9 +632,9 @@
                     <span id="themeText">Mode nuit</span>
                 </button>
             </div>
-            <div class="title-section" style="display: flex; align-items: center; justify-content: flex-start; gap: 2rem;">
-                <img src="images/Vitrine.png" alt="Vitrine" style="height: 80px; max-width: 300px; object-fit: contain;">
-                <p style="margin: 0; font-size: 1.1rem; font-weight: 600; color: white;">Diagnostic interactif et assistance audiovisuelle</p>
+            <div class="title-section">
+                <img src="images/Vitrine.png" alt="Vitrine">
+                <p>Diagnostic interactif et assistance audiovisuelle</p>
             </div>
             <div class="status-indicator">
                 <div class="status-dot"></div>
@@ -40,7 +645,6 @@
         <!-- Landing Page - Saisie de salle obligatoire -->
         <div class="landing-page" id="landingPage">
             <div class="landing-content">
-                
                 <div class="room-input-banner">
                     <div class="banner-header">
                         <span class="banner-icon">📍</span>
@@ -79,7 +683,7 @@
         </div>
 
         <!-- Assistant Page - Affiché après validation de la salle -->
-        <div class="content" id="assistantPage" style="display: none;">
+        <div class="content" id="assistantPage">
             <!-- Header de salle -->
             <div class="room-header" id="roomHeader">
                 <div class="current-room-info">
@@ -95,46 +699,33 @@
                 </button>
             </div>
 
-            <!-- Champ de saisie caché pour les messages -->
-            <input type="text" id="problemInput" style="display: none;">
-            
-            <!-- Section des palettes de problèmes -->
+            <!-- Palettes de problèmes -->
             <div class="problem-palettes" id="problemPalettes">
-                <!-- Palette Audio -->
                 <div class="palette audio" onclick="sendExampleMessage('Pas de son')">
                     <div class="palette-icon">🔵</div>
                     <h3>Problème Audio</h3>
                     <p>Microphones, haut-parleurs, volume, qualité sonore</p>
                 </div>
-
-                <!-- Palette Vidéo -->
                 <div class="palette video" onclick="sendExampleMessage('Écran noir projecteur')">
                     <div class="palette-icon">🟣</div>
                     <h3>Problème Vidéo</h3>
                     <p>Projecteurs, écrans, qualité d'image, connectivité</p>
                 </div>
-
-                <!-- Palette Réseau -->
                 <div class="palette network" onclick="sendExampleMessage('Problème de réseau')">
                     <div class="palette-icon">🟠</div>
                     <h3>Problème Réseau</h3>
                     <p>Connexion internet, Wi-Fi, connectivité réseau</p>
                 </div>
-
-                <!-- Palette Autres -->
                 <div class="palette other" onclick="sendExampleMessage('Système qui ne répond plus')">
                     <div class="palette-icon">🟢</div>
                     <h3>Autres Problèmes</h3>
                     <p>Équipements, infrastructure, maintenance générale</p>
                 </div>
             </div>
-
-            <!-- Section des suggestions -->
-            <div class="suggestions" id="suggestions"></div>
         </div>
     </div>
 
-    <!-- Modale de résultat -->
+    <!-- Modale -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal" id="modal">
             <div class="modal-icon" id="modalIcon">✅</div>
@@ -144,15 +735,101 @@
         </div>
     </div>
 
-    <!-- JavaScript modulaire -->
-    <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/api-client.js"></script>
-    <script src="js/banner-manager.js"></script>
-    <script src="js/ticket-manager.js"></script>
-    <script src="js/room-manager.js"></script>
-    <script src="js/escalation-engine.js"></script>
-    <script src="js/ui-controller.js"></script>
-    <script src="js/app.js"></script>
+    <script>
+        // Variables globales
+        let currentRoom = '';
+        let isAssistantMode = false;
+
+        // Fonction pour basculer le thème
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-moon';
+                themeText.textContent = 'Mode nuit';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                themeText.textContent = 'Mode jour';
+            }
+        }
+
+        // Fonction pour définir un exemple de salle
+        function setRoomExample(roomName) {
+            document.getElementById('roomInput').value = roomName;
+        }
+
+        // Fonction pour gérer la touche Entrée
+        function handleRoomKeyPress(event) {
+            if (event.key === 'Enter') {
+                confirmRoom();
+            }
+        }
+
+        // Fonction pour confirmer la salle
+        function confirmRoom() {
+            const roomInput = document.getElementById('roomInput');
+            const roomName = roomInput.value.trim();
+            
+            if (roomName) {
+                currentRoom = roomName;
+                document.getElementById('currentRoomDisplay').textContent = roomName;
+                
+                // Masquer la page de saisie et afficher l'assistant
+                document.getElementById('landingPage').style.display = 'none';
+                document.getElementById('assistantPage').style.display = 'block';
+                
+                isAssistantMode = true;
+            }
+        }
+
+        // Fonction pour changer de salle
+        function changeRoom() {
+            currentRoom = '';
+            isAssistantMode = false;
+            
+            // Retourner à la page de saisie
+            document.getElementById('landingPage').style.display = 'flex';
+            document.getElementById('assistantPage').style.display = 'none';
+            
+            // Vider le champ de saisie
+            document.getElementById('roomInput').value = '';
+        }
+
+        // Fonction pour retourner à l'accueil
+        function returnToHome() {
+            changeRoom();
+        }
+
+        // Fonction pour envoyer un message d'exemple
+        function sendExampleMessage(message) {
+            // Simuler l'envoi d'un message
+            console.log(`Message envoyé pour la salle ${currentRoom}: ${message}`);
+            
+            // Afficher une modale de test
+            showModal('Message envoyé', `Votre message "${message}" a été envoyé pour la salle ${currentRoom}.`, '📤');
+        }
+
+        // Fonction pour afficher une modale
+        function showModal(title, message, icon = '✅') {
+            document.getElementById('modalIcon').textContent = icon;
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        // Fonction pour fermer la modale
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Application VITRINE chargée');
+        });
+    </script>
 </body>
-</html>
+</html> 
