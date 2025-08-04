@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Intégration Vitrine</title>
+    <style>
+        body { font-family: monospace; margin: 2rem; background: #f5f5f5; }
+        .test-section { background: white; margin: 1rem 0; padding: 1rem; border-radius: 8px; border-left: 4px solid #3b82f6; }
+        .success { border-left-color: #10b981; background: #f0fdf4; }
+        .error { border-left-color: #ef4444; background: #fef2f2; }
+        .warning { border-left-color: #f59e0b; background: #fffbeb; }
+        pre { background: #f8f9fa; padding: 1rem; border-radius: 4px; overflow-x: auto; }
+        button { background: #3b82f6; color: white; border: none; padding: 0.5rem 1rem; margin: 0.25rem; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #2563eb; }
+        .test-result { margin: 0.5rem 0; padding: 0.5rem; border-radius: 4px; }
+        .pass { background: #dcfce7; color: #166534; }
+        .fail { background: #fee2e2; color: #dc2626; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test d'Intégration - Architecture Vitrine V4.0</h1>
+
+    <div class="test-section">
+        <h2>📋 Tests de Dépendances</h2>
+        <div id="dependencyTests"></div>
+        <button onclick="runDependencyTests()">Tester Dépendances</button>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 Tests des Modules</h2>
+        <div id="moduleTests"></div>
+        <button onclick="runModuleTests()">Tester Modules</button>
+    </div>
+
+    <div class="test-section">
+        <h2>🎯 Tests Fonctionnels</h2>
+        <div id="functionalTests"></div>
+        <button onclick="runFunctionalTests()">Tester Fonctionnalités</button>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 État Global</h2>
+        <div id="globalState"></div>
+        <button onclick="showGlobalState()">Afficher État</button>
+    </div>
+
+    <div class="test-section">
+        <h2>🎮 Tests Manuels</h2>
+        <button onclick="testBannerSEA()">Test Bannière SEA</button>
+        <button onclick="testBannerExisting()">Test Bannière Ticket Existant</button>
+        <button onclick="testBannerAutoResult()">Test Bannière Auto-Résultat</button>
+        <button onclick="testBannerSIM()">Test Bannière SIM</button>
+        <button onclick="testClassification()">Test Classification</button>
+        <button onclick="BannerManager.closeAll()">Fermer Toutes Bannières</button>
+    </div>
+
+    <!-- Scripts Vitrine -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api-client.js"></script>
+    <script src="js/banner-manager.js"></script>
+    <script src="js/ticket-manager.js"></script>
+    <script src="js/room-manager.js"></script>
+    <script src="js/escalation-engine.js"></script>
+    <script src="js/ui-controller.js"></script>
+
+    <script>
+        // Tests d'intégration
+        function runDependencyTests() {
+            const container = document.getElementById('dependencyTests');
+            container.innerHTML = '';
+
+            const dependencies = [
+                'VITRINE_CONFIG', 'getConfig', 'VitrineUtils', 'Utils',
+                'ApiClient', 'BannerManager', 'TicketManager', 
+                'RoomManager', 'EscalationEngine', 'UIController'
+            ];
+
+            let passCount = 0;
+            dependencies.forEach(dep => {
+                const exists = window[dep] !== undefined;
+                const result = document.createElement('div');
+                result.className = `test-result ${exists ? 'pass' : 'fail'}`;
+                result.textContent = `${exists ? '✅' : '❌'} ${dep}`;
+                container.appendChild(result);
+                if (exists) passCount++;
+            });
+
+            const summary = document.createElement('div');
+            summary.style.marginTop = '1rem';
+            summary.style.fontWeight = 'bold';
+            summary.textContent = `Résultat: ${passCount}/${dependencies.length} dépendances chargées`;
+            container.appendChild(summary);
+        }
+
+        function runModuleTests() {
+            const container = document.getElementById('moduleTests');
+            container.innerHTML = '';
+
+            const tests = [
+                {
+                    name: 'Configuration',
+                    test: () => getConfig('API.BASE_URL') && getConfig('BANNERS.SEA')
+                },
+                {
+                    name: 'Utils - Logging',
+                    test: () => typeof Utils.log.info === 'function'
+                },
+                {
+                    name: 'Utils - Storage',
+                    test: () => typeof Utils.storage.get === 'function'
+                },
+                {
+                    name: 'Utils - Validation',
+                    test: () => Utils.validation.isValidRoom('A-1750') === true
+                },
+                {
+                    name: 'ApiClient - Méthodes',
+                    test: () => typeof ApiClient.sendCopilotMessage === 'function'
+                },
+                {
+                    name: 'BannerManager - API',
+                    test: () => typeof BannerManager.show === 'function'
+                },
+                {
+                    name: 'TicketManager - État',
+                    test: () => typeof TicketManager.getStats === 'function'
+                },
+                {
+                    name: 'RoomManager - Validation',
+                    test: () => RoomManager.validateRoomFormat('A-1750').valid === true
+                },
+                {
+                    name: 'EscalationEngine - Classification',
+                    test: () => typeof EscalationEngine.testClassification === 'function'
+                },
+                {
+                    name: 'UIController - État',
+                    test: () => typeof UIController.getState === 'function'
+                }
+            ];
+
+            let passCount = 0;
+            tests.forEach(test => {
+                let passed = false;
+                try {
+                    passed = test.test();
+                } catch (error) {
+                    passed = false;
+                }
+
+                const result = document.createElement('div');
+                result.className = `test-result ${passed ? 'pass' : 'fail'}`;
+                result.textContent = `${passed ? '✅' : '❌'} ${test.name}`;
+                container.appendChild(result);
+                if (passed) passCount++;
+            });
+
+            const summary = document.createElement('div');
+            summary.style.marginTop = '1rem';
+            summary.style.fontWeight = 'bold';
+            summary.textContent = `Résultat: ${passCount}/${tests.length} tests modules réussis`;
+            container.appendChild(summary);
+        }
+
+        function runFunctionalTests() {
+            const container = document.getElementById('functionalTests');
+            container.innerHTML = '';
+
+            const tests = [
+                {
+                    name: 'Classification Vidéo',
+                    test: () => {
+                        const result = EscalationEngine.testClassification('Le projecteur ne marche pas');
+                        return result.classification.category === 'video';
+                    }
+                },
+                {
+                    name: 'Classification Audio',
+                    test: () => {
+                        const result = EscalationEngine.testClassification('Pas de son dans les haut-parleurs');
+                        return result.classification.category === 'audio';
+                    }
+                },
+                {
+                    name: 'Classification Réseau',
+                    test: () => {
+                        const result = EscalationEngine.testClassification('Problème wifi dans la salle');
+                        return result.classification.category === 'network';
+                    }
+                },
+                {
+                    name: 'Classification Hors-scope',
+                    test: () => {
+                        const result = EscalationEngine.testClassification('Bonjour comment allez-vous');
+                        return result.classification.category === 'outOfScope';
+                    }
+                },
+                {
+                    name: 'Validation Format Salle',
+                    test: () => {
+                        const valid = RoomManager.validateRoomFormat('A-1750');
+                        const invalid = RoomManager.validateRoomFormat('invalid');
+                        return valid.valid && !invalid.valid;
+                    }
+                },
+                {
+                    name: 'Cache Room',
+                    test: () => {
+                        const stats = RoomManager.getCacheStats();
+                        return typeof stats.total === 'number';
+                    }
+                },
+                {
+                    name: 'Stats Tickets',
+                    test: () => {
+                        const stats = TicketManager.getStats();
+                        return typeof stats.total === 'number';
+                    }
+                },
+                {
+                    name: 'Bannières Actives',
+                    test: () => {
+                        const banners = BannerManager.getActiveBanners();
+                        return Array.isArray(banners);
+                    }
+                }
+            ];
+
+            let passCount = 0;
+            tests.forEach(test => {
+                let passed = false;
+                try {
+                    passed = test.test();
+                } catch (error) {
+                    passed = false;
+                    console.error(`Test ${test.name} échoué:`, error);
+                }
+
+                const result = document.createElement('div');
+                result.className = `test-result ${passed ? 'pass' : 'fail'}`;
+                result.textContent = `${passed ? '✅' : '❌'} ${test.name}`;
+                container.appendChild(result);
+                if (passed) passCount++;
+            });
+
+            const summary = document.createElement('div');
+            summary.style.marginTop = '1rem';
+            summary.style.fontWeight = 'bold';
+            summary.textContent = `Résultat: ${passCount}/${tests.length} tests fonctionnels réussis`;
+            container.appendChild(summary);
+        }
+
+        function showGlobalState() {
+            const container = document.getElementById('globalState');
+            
+            const states = {
+                'Configuration': window.VITRINE_CONFIG ? 'Chargée' : 'Manquante',
+                'Room Manager': RoomManager.getState ? RoomManager.getState() : 'Non disponible',
+                'Ticket Manager': TicketManager.getStats ? TicketManager.getStats() : 'Non disponible',
+                'Banner Manager': BannerManager.getActiveBanners ? 
+                    `${BannerManager.getActiveBanners().length} bannière(s) active(s)` : 'Non disponible',
+                'Escalation Engine': EscalationEngine.getState ? EscalationEngine.getState() : 'Non disponible'
+            };
+
+            container.innerHTML = '<pre>' + JSON.stringify(states, null, 2) + '</pre>';
+        }
+
+        // Tests manuels bannières
+        async function testBannerSEA() {
+            await BannerManager.show('sea', {
+                room: 'A-1750',
+                escalation_reason: 'Test bannière SEA'
+            });
+        }
+
+        async function testBannerExisting() {
+            await BannerManager.show('existing_ticket', {
+                number: 'SEA-20240101-1234',
+                room: 'A-1750',
+                timestamp: new Date().toISOString()
+            });
+        }
+
+        async function testBannerAutoResult() {
+            await BannerManager.show('auto_result', {
+                message: '✅ Projecteur allumé automatiquement'
+            });
+        }
+
+        async function testBannerSIM() {
+            await BannerManager.show('sim', {
+                message: 'Problème de chauffage détecté'
+            });
+        }
+
+        function testClassification() {
+            const tests = [
+                'Le projecteur ne s\'allume pas',
+                'Pas de son dans les micros',
+                'Problème de wifi',
+                'Il fait trop chaud dans la salle',
+                'Bonjour comment ça va'
+            ];
+
+            tests.forEach(test => {
+                const result = EscalationEngine.testClassification(test);
+                console.log(`"${test}" → ${result.classification.category} (${result.classification.confidence})`);
+            });
+
+            alert('Résultats de classification affichés dans la console');
+        }
+
+        // Auto-run tests au chargement
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                runDependencyTests();
+                runModuleTests();
+                runFunctionalTests();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

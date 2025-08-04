@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Simple VITRINE</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="images/Vitrine.png" type="image/png">
+    
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS modulaire -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/banners.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <!-- Container principal -->
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-top">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Basculer le mode sombre">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                    <span id="themeText">Mode nuit</span>
+                </button>
+            </div>
+            <div class="title-section" style="display: flex; align-items: center; justify-content: flex-start; gap: 2rem;">
+                <img src="images/Vitrine.png" alt="Vitrine" style="height: 80px; max-width: 300px; object-fit: contain;">
+                <p style="margin: 0; font-size: 1.1rem; font-weight: 600; color: white;">Test Simple - Diagnostic interactif et assistance audiovisuelle</p>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Système opérationnel</span>
+            </div>
+        </div>
+
+        <!-- Landing Page - Saisie de salle obligatoire -->
+        <div class="landing-page" id="landingPage">
+            <div class="landing-content">
+                
+                <div class="room-input-banner">
+                    <div class="banner-header">
+                        <span class="banner-icon">📍</span>
+                        <h3>Quelle salle avez-vous besoin d'aide ?</h3>
+                    </div>
+                    
+                    <div class="banner-content">
+                        <p>Entrez le numéro de votre salle pour accéder à l'assistant personnalisé</p>
+                        
+                        <div class="room-input-container">
+                            <input 
+                                type="text" 
+                                id="roomInput" 
+                                class="room-input" 
+                                placeholder="Ex: A-1750, B-2500, SH-R200..."
+                                onkeypress="handleRoomKeyPress(event)"
+                            >
+                            <button id="confirmRoomBtn" class="confirm-room-btn" onclick="confirmRoom()">
+                                ✅ Confirmer
+                            </button>
+                        </div>
+                        
+                        <div class="room-examples">
+                            <p><strong>Exemples de formats acceptés :</strong></p>
+                            <div class="example-rooms">
+                                <span class="room-example" onclick="setRoomExample('A-1750')">A-1750</span>
+                                <span class="room-example" onclick="setRoomExample('B-2500')">B-2500</span>
+                                <span class="room-example" onclick="setRoomExample('J-2430')">J-2430</span>
+                                <span class="room-example" onclick="setRoomExample('SH-R200')">SH-R200</span>
+                                <span class="room-example" onclick="setRoomExample('DS-4000')">DS-4000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assistant Page - Affiché après validation de la salle -->
+        <div class="content" id="assistantPage" style="display: none;">
+            <!-- Header de salle -->
+            <div class="room-header" id="roomHeader">
+                <div class="current-room-info">
+                    <span class="room-icon">📍</span>
+                    <span class="room-text">Salle : <strong id="currentRoomDisplay">-</strong></span>
+                    <button class="change-room-btn" onclick="changeRoom()" title="Changer de salle">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+                <button class="return-btn" onclick="returnToHome()" aria-label="Retour à l'accueil">
+                    <i class="fas fa-home"></i>
+                    <span>Accueil</span>
+                </button>
+            </div>
+
+            <!-- Champ de saisie caché pour les messages -->
+            <input type="text" id="problemInput" style="display: none;">
+            
+            <!-- Section des palettes de problèmes -->
+            <div class="problem-palettes" id="problemPalettes">
+                <!-- Palette Audio -->
+                <div class="palette audio" onclick="sendExampleMessage('Pas de son')">
+                    <div class="palette-icon">🔵</div>
+                    <h3>Problème Audio</h3>
+                    <p>Microphones, haut-parleurs, volume, qualité sonore</p>
+                </div>
+
+                <!-- Palette Vidéo -->
+                <div class="palette video" onclick="sendExampleMessage('Écran noir projecteur')">
+                    <div class="palette-icon">🟣</div>
+                    <h3>Problème Vidéo</h3>
+                    <p>Projecteurs, écrans, qualité d'image, connectivité</p>
+                </div>
+
+                <!-- Palette Réseau -->
+                <div class="palette network" onclick="sendExampleMessage('Problème de réseau')">
+                    <div class="palette-icon">🟠</div>
+                    <h3>Problème Réseau</h3>
+                    <p>Connexion internet, Wi-Fi, connectivité réseau</p>
+                </div>
+
+                <!-- Palette Autres -->
+                <div class="palette other" onclick="sendExampleMessage('Système qui ne répond plus')">
+                    <div class="palette-icon">🟢</div>
+                    <h3>Autres Problèmes</h3>
+                    <p>Équipements, infrastructure, maintenance générale</p>
+                </div>
+            </div>
+
+            <!-- Section des suggestions -->
+            <div class="suggestions" id="suggestions"></div>
+        </div>
+    </div>
+
+    <!-- Modale de résultat -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-icon" id="modalIcon">✅</div>
+            <h3 id="modalTitle">Problème résolu</h3>
+            <p id="modalMessage">Le problème a été corrigé automatiquement.</p>
+            <button class="modal-btn" onclick="closeModal()">Retour à l'accueil</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentRoom = '';
+        let isAssistantMode = false;
+
+        // Fonction pour basculer le thème
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-moon';
+                themeText.textContent = 'Mode nuit';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                themeText.textContent = 'Mode jour';
+            }
+        }
+
+        // Fonction pour définir un exemple de salle
+        function setRoomExample(roomName) {
+            document.getElementById('roomInput').value = roomName;
+        }
+
+        // Fonction pour gérer la touche Entrée
+        function handleRoomKeyPress(event) {
+            if (event.key === 'Enter') {
+                confirmRoom();
+            }
+        }
+
+        // Fonction pour confirmer la salle
+        function confirmRoom() {
+            const roomInput = document.getElementById('roomInput');
+            const roomName = roomInput.value.trim();
+            
+            if (roomName) {
+                currentRoom = roomName;
+                document.getElementById('currentRoomDisplay').textContent = roomName;
+                
+                // Masquer la landing page et afficher l'assistant
+                document.getElementById('landingPage').style.display = 'none';
+                document.getElementById('assistantPage').style.display = 'block';
+                isAssistantMode = true;
+                
+                console.log('✅ Salle confirmée:', roomName);
+            } else {
+                alert('Veuillez entrer un numéro de salle valide.');
+            }
+        }
+
+        // Fonction pour changer de salle
+        function changeRoom() {
+            currentRoom = '';
+            document.getElementById('currentRoomDisplay').textContent = '-';
+            document.getElementById('roomInput').value = '';
+            
+            // Retourner à la landing page
+            document.getElementById('assistantPage').style.display = 'none';
+            document.getElementById('landingPage').style.display = 'block';
+            isAssistantMode = false;
+        }
+
+        // Fonction pour retourner à l'accueil
+        function returnToHome() {
+            changeRoom();
+        }
+
+        // Fonction pour envoyer un message d'exemple
+        function sendExampleMessage(message) {
+            console.log('📤 Message envoyé:', message, 'pour la salle:', currentRoom);
+            
+            // Simuler une réponse
+            setTimeout(() => {
+                showTestBanner(message);
+            }, 1000);
+        }
+
+        // Fonction pour afficher une bannière de test
+        function showTestBanner(message) {
+            const overlay = document.createElement('div');
+            overlay.className = 'banner-overlay';
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.style.zIndex = '9999';
+            
+            const banner = document.createElement('div');
+            banner.className = 'escalation-compact';
+            banner.style.background = 'white';
+            banner.style.padding = '2rem';
+            banner.style.borderRadius = '12px';
+            banner.style.maxWidth = '500px';
+            banner.style.textAlign = 'center';
+            banner.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
+            
+            banner.innerHTML = `
+                <h3 style="margin: 0 0 1rem 0; color: #333;">Test de message</h3>
+                <p style="margin: 0 0 1.5rem 0; color: #666;">Message: "${message}"</p>
+                <p style="margin: 0 0 1.5rem 0; color: #666;">Salle: ${currentRoom}</p>
+                <button onclick="this.closest('.banner-overlay').remove()" style="background: #3b82f6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">
+                    Fermer
+                </button>
+            `;
+            
+            overlay.appendChild(banner);
+            overlay.onclick = (event) => {
+                if (event.target === overlay) {
+                    overlay.remove();
+                }
+            };
+            
+            document.body.appendChild(overlay);
+        }
+
+        // Fonction pour fermer la modale
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 VITRINE Test Simple chargé avec succès !');
+            console.log('📁 CSS chargé:', document.styleSheets.length, 'fichiers');
+        });
+    </script>
+</body>
+</html> 

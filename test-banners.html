@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Bannières VITRINE - Exact Design</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="images/Vitrine.png" type="image/png">
+    
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS modulaire -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/banners.css">
+    <link rel="stylesheet" href="css/components.css">
+    
+    <style>
+        /* Styles de test pour reproduire exactement les images */
+        .test-container {
+            padding: 2rem;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            min-height: 100vh;
+        }
+        
+        .test-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        
+        .test-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .test-btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+        
+        .test-btn.secondary {
+            background: #6b7280;
+        }
+        
+        .test-btn.secondary:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 style="color: white; text-align: center; margin-bottom: 2rem;">Test Bannières VITRINE - Design Exact</h1>
+        
+        <div class="test-buttons">
+            <button class="test-btn" onclick="showSEABanner()">🎫 Bannière SEA (Ticket)</button>
+            <button class="test-btn" onclick="showExistingTicketBanner()">🎫 Ticket Existant</button>
+            <button class="test-btn" onclick="showSIBanner()">💻 Bannière SI (Réseau)</button>
+            <button class="test-btn" onclick="showSIMBanner()">🏢 Bannière SIM (Immeubles)</button>
+            <button class="test-btn secondary" onclick="clearAllBanners()">🗑️ Effacer tout</button>
+        </div>
+        
+        <div style="color: white; text-align: center; max-width: 800px; margin: 0 auto;">
+            <h3>Instructions de test :</h3>
+            <p>Cliquez sur les boutons ci-dessus pour afficher les bannières exactement comme dans les images.</p>
+            <p>Les bannières utilisent les styles CSS exacts extraits du fichier original.</p>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour créer l'overlay
+        function createOverlay() {
+            const overlay = document.createElement('div');
+            overlay.className = 'banner-overlay';
+            overlay.onclick = (event) => {
+                if (event.target === overlay) {
+                    overlay.remove();
+                }
+            };
+            return overlay;
+        }
+
+        // Bannière SEA (Service Expert Audiovisuel) - EXACTEMENT comme l'image
+        function showSEABanner() {
+            const overlay = createOverlay();
+            const currentRoom = 'A-1750';
+            
+            const escalationDiv = document.createElement('div');
+            escalationDiv.className = 'escalation-compact fade-in';
+            
+            escalationDiv.innerHTML = `
+                <div class="escalation-header" style="margin-bottom: 1.5rem;">
+                    <div class="escalation-image-container" style="text-align: center; margin-bottom: 1rem;">
+                        <img id="sea-logo" src="images/SEA2.png" alt="Service Expert Audiovisuel UQAM" style="max-width: 200px; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div class="sea-fallback-content" style="display: none; color: black !important; text-align: center; padding: 1rem;">
+                            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.2rem; color: black !important;">ASSISTANCE TECHNIQUE</h3>
+                            <p style="margin: 0 0 0.5rem 0; font-size: 1rem; color: black !important;">COMPOSER LE POSTE</p>
+                            <p style="margin: 0; font-size: 3rem; font-weight: bold; color: black !important;">6135</p>
+                        </div>
+                    </div>
+                    <div class="escalation-text">
+                        <strong style="color: black !important; font-weight: 600; font-size: 1.4rem; display: block; margin-bottom: 0.5rem;">Intervention technique requise</strong>
+                        <span class="escalation-subtitle" style="color: black !important; font-weight: 700; font-size: 1.1rem;">SEA: 📱 6135 ou créer un ticket - Salle ${currentRoom}</span>
+                    </div>
+                </div>
+                
+                <div class="client-description-section" style="margin: 1.5rem 0;">
+                    <div class="description-header" style="margin-bottom: 0.5rem;">
+                        <i class="fas fa-edit" style="color: black !important; margin-right: 0.5rem;"></i>
+                        <span style="color: black !important; font-weight: 600;">Description détaillée (facultative)</span>
+                    </div>
+                    <textarea
+                        class="client-description-input"
+                        placeholder="Décrivez votre problème en détail..."
+                        rows="3"
+                    ></textarea>
+                    <div class="description-help" style="margin-top: 0.5rem;">
+                        <small style="color: black !important; font-style: italic;">💡 Si vous ne saisissez rien, un message générique sera utilisé selon le type de problème.</small>
+                    </div>
+                </div>
+                
+                <div class="escalation-actions" style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                    <button class="escalation-btn secondary" onclick="this.closest('.banner-overlay').remove()">
+                        <i class="fas fa-times"></i> Fermer
+                    </button>
+                    <button class="escalation-btn primary">
+                        <i class="fas fa-paper-plane"></i> Créer un ticket
+                    </button>
+                </div>
+            `;
+            
+            escalationDiv.onclick = (event) => event.stopPropagation();
+            
+            overlay.appendChild(escalationDiv);
+            document.body.appendChild(overlay);
+        }
+
+        // Bannière Ticket Existant - EXACTEMENT comme l'image
+        function showExistingTicketBanner() {
+            const overlay = createOverlay();
+            const lastTicket = {
+                number: 'SEA-2025-0014',
+                room: 'A-1750',
+                timestamp: new Date()
+            };
+            
+            const bannerDiv = document.createElement('div');
+            bannerDiv.className = 'existing-ticket-banner fade-in';
+            
+            bannerDiv.innerHTML = `
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🎫</div>
+                <h3 style="margin: 0 0 1rem 0; font-size: 1.5rem; font-weight: 600;">Ticket déjà créé pour cette salle</h3>
+                <div style="background: rgba(255,255,255,0.15); padding: 1.25rem; border-radius: 10px; margin: 1.5rem 0;">
+                    <p style="margin: 0.5rem 0; font-size: 1rem;"><strong>📄 Numéro :</strong> ${lastTicket.number}</p>
+                    <p style="margin: 0.5rem 0; font-size: 1rem;"><strong>🏢 Salle :</strong> ${lastTicket.room}</p>
+                    <p style="margin: 0.5rem 0; font-size: 1rem;"><strong>⏰ Créé :</strong> ${new Date(lastTicket.timestamp).toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}</p>
+                </div>
+                <p style="margin: 1.5rem 0; opacity: 0.95; font-size: 1rem; line-height: 1.4;">
+                    Un ticket SEA a déjà été escaladé vers l'équipe technique dans la même session.
+                </p>
+                <p style="margin: 1rem 0; opacity: 0.9; font-size: 0.9rem;">
+                    📞 <strong>Vous pouvez toujours appeler directement le SEA au 6135</strong> pour un suivi ou une urgence.
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap;">
+                    <button class="ticket-btn close" onclick="this.closest('.banner-overlay').remove()">
+                        ✕ Fermer
+                    </button>
+                    <button class="ticket-btn call">
+                        📞 Appeler SEA
+                    </button>
+                    <button class="ticket-btn copy">
+                        📋 Copier numéro
+                    </button>
+                </div>
+            `;
+            
+            bannerDiv.onclick = (event) => event.stopPropagation();
+            
+            overlay.appendChild(bannerDiv);
+            document.body.appendChild(overlay);
+        }
+
+        // Bannière SI (Services Informatiques) - EXACTEMENT comme l'image
+        function showSIBanner() {
+            const overlay = createOverlay();
+            const currentRoom = 'A-1750';
+            
+            const escalationDiv = document.createElement('div');
+            escalationDiv.className = 'si-banner fade-in';
+            
+            escalationDiv.innerHTML = `
+                <div class="escalation-header" style="margin-bottom: 1.5rem;">
+                    <div class="escalation-image-container" style="text-align: center; margin-bottom: 1rem;">
+                        <img id="si-logo" src="images/SI.png" alt="Services Informatiques UQAM" style="max-width: 200px; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                    </div>
+                    <div class="escalation-text">
+                        <strong style="color: black !important; font-weight: 600; font-size: 1.4rem; display: block; margin-bottom: 0.5rem;">Services Informatiques UQAM</strong>
+                        <span class="escalation-subtitle" style="color: black !important; font-weight: 700; font-size: 1.1rem;">Problème réseau - Salle ${currentRoom}</span>
+                    </div>
+                </div>
+                
+                <div class="si-contact-content" style="margin: 1.5rem 0; text-align: left;">
+                    <p style="color: black !important; font-size: 1rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                        Pour les problèmes de réseau, connectivité Internet, Wi-Fi, ou équipements informatiques dans la salle ${currentRoom}, veuillez contacter les Services Informatiques.
+                    </p>
+                    
+                    <div class="si-contact-info" style="background: rgba(0,0,0,0.05); padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                        <div class="si-contact-primary" style="display: flex; align-items: center; margin-bottom: 0.75rem; gap: 0.5rem;">
+                            <span style="font-size: 1.2rem;">📞</span>
+                            <strong style="color: black !important; font-size: 1.1rem;">SI : 514-987-3000</strong>
+                            <span style="color: black !important; opacity: 0.7; font-size: 0.9rem;">(poste 5050)</span>
+                        </div>
+                        <div class="si-contact-secondary" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 1.2rem;">🌐</span>
+                            <a href="https://servicesinformatiques.uqam.ca/" target="_blank" style="color: #2196F3; text-decoration: none; font-weight: 500;">servicesinformatiques.uqam.ca</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="si-actions" style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
+                    <button class="si-btn secondary" onclick="this.closest('.banner-overlay').remove()">
+                        ✕ Fermer
+                    </button>
+                    <button class="si-btn primary">
+                        📞 Appeler SI
+                    </button>
+                    <button class="si-btn primary">
+                        🌐 Site web
+                    </button>
+                </div>
+            `;
+            
+            escalationDiv.onclick = (event) => event.stopPropagation();
+            
+            overlay.appendChild(escalationDiv);
+            document.body.appendChild(overlay);
+        }
+
+        // Bannière SIM (Service des Immeubles) - EXACTEMENT comme l'image
+        function showSIMBanner() {
+            const overlay = createOverlay();
+            const currentRoom = 'A-1750';
+            
+            const escalationDiv = document.createElement('div');
+            escalationDiv.className = 'sim-banner fade-in';
+            
+            escalationDiv.innerHTML = `
+                <div class="escalation-header" style="margin-bottom: 1.5rem;">
+                    <div class="escalation-image-container" style="text-align: center; margin-bottom: 1rem;">
+                        <img id="sim-logo" src="images/SIM.png" alt="Service des Immeubles UQAM" style="max-width: 200px; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                    </div>
+                    <div class="escalation-text">
+                        <strong style="color: black !important; font-weight: 600; font-size: 1.4rem; display: block; margin-bottom: 0.5rem;">Service des Immeubles UQAM</strong>
+                        <span class="escalation-subtitle" style="color: black !important; font-weight: 700; font-size: 1.1rem;">Problème non-audiovisuel - Salle ${currentRoom}</span>
+                    </div>
+                </div>
+                
+                <div class="sim-contact-content" style="margin: 1.5rem 0; text-align: left;">
+                    <p style="color: black !important; font-size: 1rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                        Pour les problèmes d'infrastructure, d'électricité, de plomberie, de chauffage ou de climatisation dans la salle ${currentRoom}, veuillez contacter le Service des Immeubles.
+                    </p>
+                    
+                    <div class="sim-contact-info" style="background: rgba(0,0,0,0.05); padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                        <div class="sim-contact-primary" style="display: flex; align-items: center; margin-bottom: 0.75rem; gap: 0.5rem;">
+                            <span style="font-size: 1.2rem;">📞</span>
+                            <strong style="color: black !important; font-size: 1.1rem;">SIM : 514-987-3141</strong>
+                            <span style="color: black !important; opacity: 0.7; font-size: 0.9rem;">(poste 3141)</span>
+                        </div>
+                        <div class="sim-contact-secondary" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 1.2rem;">🌐</span>
+                            <a href="https://sim.uqam.ca/" target="_blank" style="color: #2196F3; text-decoration: none; font-weight: 500;">sim.uqam.ca</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sim-actions" style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
+                    <button class="sim-btn secondary" onclick="this.closest('.banner-overlay').remove()">
+                        ✕ Fermer
+                    </button>
+                    <button class="sim-btn primary">
+                        📞 Appeler SIM
+                    </button>
+                    <button class="sim-btn primary">
+                        🌐 Site web
+                    </button>
+                </div>
+            `;
+            
+            escalationDiv.onclick = (event) => event.stopPropagation();
+            
+            overlay.appendChild(escalationDiv);
+            document.body.appendChild(overlay);
+        }
+
+        // Fonction pour effacer toutes les bannières
+        function clearAllBanners() {
+            const overlays = document.querySelectorAll('.banner-overlay');
+            overlays.forEach(overlay => overlay.remove());
+        }
+
+        // Test du mode nuit
+        function toggleTheme() {
+            const body = document.body;
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+            }
+        }
+
+        // Ajouter un bouton de test du mode nuit
+        const themeBtn = document.createElement('button');
+        themeBtn.className = 'test-btn secondary';
+        themeBtn.textContent = '🌙 Mode Nuit';
+        themeBtn.onclick = toggleTheme;
+        document.querySelector('.test-buttons').appendChild(themeBtn);
+    </script>
+</body>
+</html> 
