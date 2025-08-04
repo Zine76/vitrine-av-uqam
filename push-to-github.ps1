@@ -94,4 +94,4 @@ if ($remote -match "github\.com/([^/]+)/([^/]+)") {
     Write-Host "🌐 Vérifiez votre repository GitHub" -ForegroundColor Cyan
 }
 
-Write-Host "`n🏁 Script terminé!" -ForegroundColor Green 
+Write-Host "`nScript termine!" -ForegroundColor Green 
